@@ -2,18 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Chat from './Chat'
-import TimerView, {myTimer} from './TimerView'
 import reportWebVitals from './reportWebVitals';
-import messageStore from './mobx/MessageStore';
-import webSocket from './lib/websocket';
-
-webSocket.start();
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <TimerView timer={myTimer} /> */}
-    <Chat store={messageStore}/>
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
