@@ -2,8 +2,12 @@ import { useLocalStore, userLocalStore } from 'mobx-react-lite';
 // import fetch
 
 const useNotificationStore = () => {
+    // const server = "http://10.0.2.50";
+    const server = "api.store.sunmoon.zone";
+    // const server = "localhost"
     const store = useLocalStore(() => ({
-        messages: [],
+        messages: {},
+        ids: [],
         socket: null,
         me: -1,
         to: -1,
@@ -15,14 +19,17 @@ const useNotificationStore = () => {
         },
         push(msg) {
             // store.messages = [msg, ...store.messages];
-            store.messages.push(msg);
+            store.messages[msg.id] = msg;
+            if(store.ids.indexOf(msg.id) === -1){
+                store.ids.push(msg.id);
+            }
         },
         startSocket() {
             if (!window.WebSocket) {
                 window.WebSocket = window.MozWebSocket;
             }
 
-            store.socket = new WebSocket("ws://localhost:18888/push");
+            store.socket = new WebSocket(`ws://${server}/push`);
             store.socket.onclose = () => setTimeout(() => store.startSocket(), 5000);
             // store.socket.onopen = () => store.sendRegister();
         },
@@ -30,8 +37,14 @@ const useNotificationStore = () => {
             store.socket.onmessage = evt => {
                 const result = JSON.parse(evt.data);
                 const newNotification = result.returnObject;
-
                 console.log(`收到消息：${evt.data}`);
+
+                if ('done' === newNotification ||
+                    'ok' === newNotification) {
+                    // 成功标识 
+                    return;
+                }
+
                 store.push(newNotification);
 
                 console.log(`messages: ${JSON.stringify(store.messages)}`);
@@ -49,20 +62,21 @@ Authorization=77017567996651110';
             store.socket.send(msg.replace("@me", store.me));
         },
         sendMsg(msg) {
-            
-            fetch('http://localhost:9999/push')
+
+            fetch(`https://${server}/notification`)
                 .then(res => res.json)
                 .then(result => console.log(JSON.stringify(result)));
 
             const p = {
                 from: store.me,
                 to: store.to,
-                content: msg
+                content: msg,
+                time: new Date()
             };
 
             console.log(`params is: ${JSON.stringify(p)}`);
 
-            fetch('http://localhost:9999/push/v0/push', {
+            fetch(`https://${server}/notification/v0/push`, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',

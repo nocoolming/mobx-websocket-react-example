@@ -4,7 +4,7 @@ import { useObserver } from 'mobx-react-lite';
 
 const NotificationView = () => {
     const { notificationStore } = useContext(globalContext);
-    const { startSocket, readSocket, sendRegister, messages } = notificationStore;
+    const { startSocket, readSocket, sendRegister, messages, ids } = notificationStore;
 
     useEffect(() => {
         startSocket()
@@ -17,8 +17,16 @@ const NotificationView = () => {
             <p>notifications</p>
             <Chat />
             <ol>
-                {messages.map(
-                    msg => <li>{msg}</li>
+                {ids.map(
+                    id => {
+                        const msg = messages[id];
+                        return (
+                            <li>
+                                <b>from: {msg.from}</b>
+                                <p>content: {msg.content}</p>
+                            </li>
+                        )
+                    }
                 )}
             </ol>
         </div>
@@ -28,7 +36,7 @@ const NotificationView = () => {
 
 const Chat = () => {
     const { notificationStore } = useContext(globalContext);
-    const { setMe, setTo, sendMsg, sendRegister} = notificationStore;
+    const { setMe, setTo, sendMsg, sendRegister } = notificationStore;
     const [msg, setMsg] = useState("");
 
     return useObserver(() => (
