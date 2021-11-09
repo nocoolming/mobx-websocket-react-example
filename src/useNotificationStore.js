@@ -29,7 +29,7 @@ const useNotificationStore = () => {
                 window.WebSocket = window.MozWebSocket;
             }
 
-            store.socket = new WebSocket(`ws://${server}/push`);
+            store.socket = new WebSocket(`wss://push.sunmoon.zone/push`);
             store.socket.onclose = () => setTimeout(() => store.startSocket(), 5000);
             // store.socket.onopen = () => store.sendRegister();
         },
