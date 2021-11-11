@@ -3,7 +3,8 @@ import { useLocalStore, userLocalStore } from 'mobx-react-lite';
 
 const useNotificationStore = () => {
     // const server = "http://10.0.2.50";
-    const server = "api.store.sunmoon.zone";
+    const apiServer = "http://localhost:9999";
+    const pushServer = "ws://localhost:10000/push"
     // const server = "localhost"
     const store = useLocalStore(() => ({
         messages: {},
@@ -29,7 +30,8 @@ const useNotificationStore = () => {
                 window.WebSocket = window.MozWebSocket;
             }
 
-            store.socket = new WebSocket(`wss://push.sunmoon.zone/push`);
+            // store.socket = new WebSocket(`wss://push.sunmoon.zone/push`);
+            store.socket = new WebSocket(pushServer);
             store.socket.onclose = () => setTimeout(() => store.startSocket(), 5000);
             // store.socket.onopen = () => store.sendRegister();
         },
@@ -62,11 +64,6 @@ Authorization=77017567996651110';
             store.socket.send(msg.replace("@me", store.me));
         },
         sendMsg(msg) {
-
-            fetch(`https://${server}/notification`)
-                .then(res => res.json)
-                .then(result => console.log(JSON.stringify(result)));
-
             const p = {
                 from: store.me,
                 to: store.to,
@@ -76,7 +73,7 @@ Authorization=77017567996651110';
 
             console.log(`params is: ${JSON.stringify(p)}`);
 
-            fetch(`https://${server}/notification/v0/push`, {
+            fetch(`${apiServer}/notification/v0/push/chat`, {
                 method: 'POST',
                 mode: 'cors',
                 cache: 'no-cache',
@@ -93,7 +90,7 @@ Authorization=77017567996651110';
                             }
                         )
                 )
-                .catch(e => console.err(JSON.stringify(e)))
+                .catch(e => console.error(JSON.stringify(e)))
 
         }
     }));
