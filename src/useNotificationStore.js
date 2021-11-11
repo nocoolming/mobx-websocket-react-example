@@ -2,10 +2,15 @@ import { useLocalStore, userLocalStore } from 'mobx-react-lite';
 // import fetch
 
 const useNotificationStore = () => {
-    // const server = "http://10.0.2.50";
-    const apiServer = "http://localhost:9999";
-    const pushServer = "ws://localhost:10000/push"
-    // const server = "localhost"
+    // const apiServer = "http://localhost:9999";
+    // const pushServer = "ws://localhost:10000/push"
+
+    // const apiServer = "http://10.0.2.50:9999";
+    // const pushServer = "ws://10.0.2.50:10000/push"
+
+    const apiServer = "https://api.store.sunmoon.zone";
+    const pushServer = "wss://push.sunmoon.zone/push"
+
     const store = useLocalStore(() => ({
         messages: {},
         ids: [],
@@ -21,7 +26,7 @@ const useNotificationStore = () => {
         push(msg) {
             // store.messages = [msg, ...store.messages];
             store.messages[msg.id] = msg;
-            if(store.ids.indexOf(msg.id) === -1){
+            if (store.ids.indexOf(msg.id) === -1) {
                 store.ids.push(msg.id);
             }
         },
