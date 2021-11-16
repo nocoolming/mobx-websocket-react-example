@@ -2,14 +2,14 @@ import { useLocalStore, userLocalStore } from 'mobx-react-lite';
 // import fetch
 
 const useNotificationStore = () => {
-    // const apiServer = "http://localhost:9999";
-    // const pushServer = "ws://localhost:10000/push"
+    const apiServer = "http://localhost:9999";
+    const pushServer = "ws://localhost:10000/push"
 
     // const apiServer = "http://10.0.2.50:9999";
     // const pushServer = "ws://10.0.2.50:10000/push"
 
-    const apiServer = "https://api.store.sunmoon.zone";
-    const pushServer = "wss://push.sunmoon.zone/push"
+    // const apiServer = "https://api.store.sunmoon.zone";
+    // const pushServer = "wss://push.sunmoon.zone/push"
 
     const store = useLocalStore(() => ({
         messages: {},
@@ -46,13 +46,10 @@ const useNotificationStore = () => {
                 const newNotification = result.returnObject;
                 console.log(`收到消息：${evt.data}`);
 
-                if ('done' === newNotification ||
-                    'ok' === newNotification) {
-                    // 成功标识 
-                    return;
-                }
 
-                store.push(newNotification);
+                if("Chat" === newNotification.category){
+                    store.push(newNotification);
+                }
 
                 console.log(`messages: ${JSON.stringify(store.messages)}`);
             }
@@ -64,9 +61,16 @@ action=register\n\
 time=1635401835396\n\
 \n\
 id=@me\n\
-Authorization=77017567996651110';
-            console.log("发送注册请求");
-            store.socket.send(msg.replace("@me", store.me));
+accountId=@accountId\n\
+Authorization=77017567996651110'
+            .replace("@me", store.me)
+            .replace("@accountId", store.me);
+
+            console.log("发送注册请求" + msg);
+            store.socket.send(
+                msg
+                    
+            );
         },
         sendMsg(msg) {
             const p = {
